@@ -20,7 +20,7 @@ app.use(logRequest);
 // ✅ Allow frontend origin (Vite runs on port 5173)
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://famous-cendol-ad0637.netlify.app"],
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
