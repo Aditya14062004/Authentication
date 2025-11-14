@@ -6,25 +6,43 @@ const sendEmail = require('../utils/sendEmails.js');
 // Register route
 router.post('/signup', async function (req, res) {
     try {
-        const data = req.body; // Assuming that request body contains user data
+        const data = req.body;
+        const { gmail } = data;
 
-        // Creating new user using mongoose model
+        // Step 1️⃣: Check if user already exists
+        const existingUser = await User.findOne({ gmail });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User already exists with this email"
+            });
+        }
+
+        // Step 2️⃣: Create new user
         const newUser = new User(data);
-
-        // Save the new user to the database
         const response = await newUser.save();
+
         console.log("Data Saved");
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             message: "User registered successfully",
             user: response
         });
 
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error(error);
+
+        // Step 3️⃣: Handle MongoDB duplicate key error as a fallback
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: "Email already registered"
+            });
+        }
+
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
-})
+});
 
 // login route
 router.post('/login', async (req, res) => {
