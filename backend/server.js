@@ -20,7 +20,7 @@ app.use(logRequest);
 // ✅ Allow frontend origin (Vite runs on port 5173)
 app.use(
   cors({
-    origin: "https://magnificent-parfait-1bf66f.netlify.app/",
+    origin: "https://magnificent-parfait-1bf66f.netlify.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
