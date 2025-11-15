@@ -1,29 +1,25 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const { Resend } = require("resend");
+require("dotenv").config();
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, text) => {
-  console.log("Attempting to send email...");
+  console.log("Attempting to send email via Resend...");
   console.log("To:", to);
-  console.log("Using:", process.env.EMAIL_USER);
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: "Aditya Auth App <onboarding@resend.dev>",  // change name only, keep email
       to,
       subject,
       text,
+      html: `<p>${text}</p>`, // basic HTML fallback
     });
-    console.log("✅ Email sent successfully");
+
+    console.log("✅ Email sent successfully:", result);
+    return result;
   } catch (err) {
-    console.error("❌ Error while sending email:", err);
+    console.error("❌ RESEND EMAIL ERROR:", err);
     throw err;
   }
 };
